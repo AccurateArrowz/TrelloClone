@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import type { TaskType } from "./Task";
+
 
 type AddNewTaskProp = {
   isAddNewTaskInputOpen: boolean;
   openAddNewTaskInput: () => void;
   closeAddNewTaskInput: () => void;
-  onAddNewTask: (description: string)=> void,
+  onAddNewTask:  (description: string)=> void,
 };
 
 export default function AddNewTask({

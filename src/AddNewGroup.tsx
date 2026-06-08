@@ -21,6 +21,7 @@ export default function AddNewGroup({
     const newGroup = {
       id: crypto.randomUUID() as UUID,
       title: newGroupTitle,
+      tasks: []
     };
     setNewGroupTitle("");
     onAddNewGroup(newGroup);

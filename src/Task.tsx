@@ -14,7 +14,10 @@ export type TaskProp = TaskType & {
 
 export default function Task({ id, description, completed, toggleTaskStatus }: TaskProp) {
   return (
-    <li>
+    <li className='flex gap-1'
+    draggable
+
+    >
       <input
         type="checkbox"
         checked={completed}
