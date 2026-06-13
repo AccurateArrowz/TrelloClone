@@ -9,3 +9,4 @@ export type OnAddNewTask = (payload: { newTask: TaskType; groupId: UUID }) => vo
 export type OnTaskDrop = (payload: { groupId: UUID; taskId: UUID }) => void;
 
 export type OnAddNewGroup = (group: GroupType) => void; 
+

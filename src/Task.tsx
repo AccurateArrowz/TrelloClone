@@ -1,27 +1,38 @@
 import React from 'react'
 import type { UUID } from './types';
+import type {OnTaskStatusToggle} from './Group.ts'
 
 
 export type TaskType = {
   id: UUID;
+  groupId: UUID
   description: string;
   completed: boolean;
 };
 
-export type TaskProp = TaskType & {
-  toggleTaskStatus: (id: UUID) => void;
+export type TaskProp = {
+  task: TaskType;
+  onTaskStatusToggle: OnTaskStatusToggle;
 };
 
-export default function Task({ id, description, completed, toggleTaskStatus }: TaskProp) {
+export default function Task({ task, onTaskStatusToggle }: TaskProp) {
+    const { description, completed } = task;
+
+    // function checkValidDataAttachment<T> = (data:T )
+
+  const onDragStart:  React.DragEventHandler<HTMLLIElement> = (e)=> {
+    e.dataTransfer.setData('text/plain', JSON.stringify(task));
+  }
+
   return (
     <li className='flex gap-1'
     draggable
-
+    onDragStart={onDragStart}
     >
       <input
         type="checkbox"
         checked={completed}
-        onChange={() => toggleTaskStatus(id)}
+        onChange={() => onTaskStatusToggle({task})}
       />
       <span>{description}</span>
     </li>
