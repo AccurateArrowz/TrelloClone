@@ -18,20 +18,19 @@ type GroupProps = {
   submitTaskStatusToggle: HandleTaskStatusToggle;
 };
 
-export type OnTaskStatusToggle = ({task}: {task:TaskType}) => void;
-
 
 
 export default function Group({ group, onAddNewTask, handleTaskDrop, submitTaskStatusToggle}: GroupProps) {
   const [isAddNewTaskInputOpen, setIsAddNewTaskInputOpen] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false); //note drageOver means a element is being hovered over the div (referencing from browser api)
   
-  const onTaskStatusToggle: OnTaskStatusToggle = ({task}) => {
-    console.log("trying to toggleTaskStatus");
-    submitTaskStatusToggle({task})
+  const onTaskStatusToggle: HandleTaskStatusToggle = (task) => {
+    submitTaskStatusToggle(task)
   };
 
   const handleDragOver:  React.DragEventHandler<HTMLDivElement> = (e)=> {
       e.preventDefault();
+      setIsDragOver(true);
   };
 
   const submitNewTask = (description: string)=> { //prepares the task paylaod and calls addNewTask handler from Board comp
@@ -57,10 +56,16 @@ export default function Group({ group, onAddNewTask, handleTaskDrop, submitTaskS
 
   };
 
+  const onDragLeave = ()=> {
+          setIsDragOver(false);
+
+  }
+
   return (
-    <div className="w-72 max-h-1/3 border-2 shrink-0 bg-white rounded-lg p-3"
+<div className={`w-72 min-h-1/3 border-2 shrink-0 bg-white rounded-lg p-3 ${isDragOver ? "ring-2 ring-amber-300" : ""}`}
     onDragOver={handleDragOver}
     onDrop={submitTaskDrop}
+    onDragLeave={onDragLeave}
     >
       <h3>{group.title}</h3>
       <ul>

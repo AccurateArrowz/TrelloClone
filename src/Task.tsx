@@ -1,6 +1,6 @@
 import React from 'react'
 import type { UUID } from './types';
-import type {OnTaskStatusToggle} from './Group.ts'
+import type { HandleTaskStatusToggle } from "./Board";
 
 
 export type TaskType = {
@@ -12,7 +12,7 @@ export type TaskType = {
 
 export type TaskProp = {
   task: TaskType;
-  onTaskStatusToggle: OnTaskStatusToggle;
+  onTaskStatusToggle: HandleTaskStatusToggle;
 };
 
 export default function Task({ task, onTaskStatusToggle }: TaskProp) {
@@ -32,7 +32,7 @@ export default function Task({ task, onTaskStatusToggle }: TaskProp) {
       <input
         type="checkbox"
         checked={completed}
-        onChange={() => onTaskStatusToggle({task})}
+        onChange={() => onTaskStatusToggle(task)}
       />
       <span>{description}</span>
     </li>

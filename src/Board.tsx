@@ -1,51 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { GroupType } from "./Group";
 import Group from "./Group";
 import AddNewGroup from "./AddNewGroup";
 import type { UUID, OnAddNewTask } from "./types";
 import type { TaskType } from "./Task";
+import { sampleData2 } from "./rough_sampleData";
 
-//sample data for userId A and boardId x
-const sampleData: GroupType[] = [
-  {
-    id: "group-a" as UUID,
-    title: "Group First",
-    tasks: [
-      {
-        id: "task-1" as UUID,
-        groupId: "group-a" as UUID,
-        description: "this is the task 1 ",
-        completed: false,
-      },
-      {
-        id: "task-2" as UUID,
-        groupId: "group-a" as UUID,
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
-        description: "this is the task 2 ",
-        completed: false,
-      },
-    ],
-  },
-  {
-    id: "group-b" as UUID,
-    title: "Group Second",
-    tasks: [
-      {
-        id: "task-3" as UUID,
-        groupId: "group-a" as UUID,
-
-        description: "this is the task 3 ",
-        completed: false,
-      },
-      {
-        id: "task-4" as UUID,
-        groupId: "group-a" as UUID,
-        description: "this is the task 4 ",
-        completed: false,
-      },
-    ],
-  },
-];
 
 export type HandleTaskDrop = ({
   newGroupId,
@@ -55,10 +21,12 @@ export type HandleTaskDrop = ({
   task: TaskType;
 }) => void;
 
-export type HandleTaskStatusToggle = ({task}: {task:TaskType}) => void;
+export type HandleTaskStatusToggle = (task: TaskType) => void;
 
 export default function Board() {
-  const [groups, setGroups] = useState<GroupType[]>(sampleData);
+  const [groups, setGroups] = useState(sampleData2);
+
+  // const [groups, setGroups] = useState(sampleData3);
   const [isAddNewGroupInputOpen, setIsAddNewGroupInputOpen] = useState(false);
 
   const handleAddNewGroup = (group: GroupType) => {
@@ -95,16 +63,24 @@ export default function Board() {
     setGroups(updatedGroups);
   };
 
-  const handleTaskStatusToggle: HandleTaskStatusToggle = ({task})=> {
-     const updatedGroups= [...groups];
-     const currentGroup = updatedGroups.find(group => group.id === task.groupId);
-     if(currentGroup){
-      currentGroup.tasks = currentGroup.tasks.filter(t => t.id === task.id? 
-                                        {...t, completed: !t.completed}:
-                                      t)
-     }
-     setGroups(updatedGroups);
+ const handleTaskStatusToggle: HandleTaskStatusToggle = (task) => {
+    const {id: taskId, groupId} = task; //the task item contains both the id and the group  it is in
+    const updatedGroups  = [...groups];
+   const group  = updatedGroups.find(group => group.id === groupId);
+   if(group){
+     group.tasks = group.tasks.map(t => t.id === taskId? 
+                    ({...t, 
+                    completed: !t.completed
+                     }
+                  )
+                  : t);
   }
+  console.log('groups after toggling the task');
+  console.log(updatedGroups)
+  setGroups(updatedGroups);
+ 
+ }
+
 
   return (
     <div className="flex gap-4 overflow-x-auto p-4 h-screen">
