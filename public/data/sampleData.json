@@ -1,0 +1,74 @@
+[
+  {
+    "id": "group-a",
+    "title": "Design",
+    "tasks": [
+      {
+        "id": "task-1",
+        "groupId": "group-a",
+        "description": "Create wireframes for the dashboard layout",
+        "completed": false
+      },
+      {
+        "id": "task-2",
+        "groupId": "group-a",
+        "description": "Design the color palette and typography system",
+        "completed": true
+      },
+      {
+        "id": "task-3",
+        "groupId": "group-a",
+        "description": "Export all icons as SVGs from Figma",
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "group-b",
+    "title": "Frontend",
+    "tasks": [
+      {
+        "id": "task-4",
+        "groupId": "group-b",
+        "description": "Set up Vite project with TypeScript and Tailwind",
+        "completed": true
+      },
+      {
+        "id": "task-5",
+        "groupId": "group-b",
+        "description": "Build the Kanban board drag-and-drop functionality",
+        "completed": false
+      },
+      {
+        "id": "task-6",
+        "groupId": "group-b",
+        "description": "Integrate RTK Query for task fetching and mutations",
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "group-c",
+    "title": "Backend",
+    "tasks": [
+      {
+        "id": "task-7",
+        "groupId": "group-c",
+        "description": "Design the REST API endpoints for task CRUD",
+        "completed": false
+      },
+      {
+        "id": "task-8",
+        "groupId": "group-c",
+        "description": "Set up JWT authentication with refresh token rotation",
+        "completed": true
+      },
+      {
+        "id": "task-9",
+        "groupId": "group-c",
+        "description": "Write Zod validation schemas for all request bodies",
+        "completed": false
+      }
+    ]
+  }
+]

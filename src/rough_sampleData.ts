@@ -1,8 +1,9 @@
-import type { GroupType } from "./Group";
+import type { RawGroupType  } from "./Group";
 import type { UUID } from "./types";
 
 //sample data for userId A and boardId x
-export const sampleData: GroupType[] = [
+export const sampleData: RawGroupType [] = 
+[
   {
     id: "group-a" as UUID,
     title: "Group First",
@@ -44,7 +45,7 @@ export const sampleData: GroupType[] = [
 ];
 
 // larger sample data (4 groups * 5 tasks)
-export const sampleData2: GroupType[] = [
+export const sampleData2: RawGroupType [] = [
   {
     id: "group-1" as UUID,
     title: "Backlog",

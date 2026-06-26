@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import type { GroupType } from "./Group";
+import type { NormalizedGroup } from "./Group";
 import type { UUID } from "./types";
 
 type AddNewGroupProps = {
   isAddNewGroupInputOpen: boolean;
   openAddNewGroupInput: () => void;
   onCloseNewGroupInput: () => void;
-  onAddNewGroup: (group: GroupType) => void;
+  onAddNewGroup: (group: NormalizedGroup) => void;
 };
 
 export default function AddNewGroup({
