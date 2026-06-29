@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { GroupType } from "./Group";
 import Group from "./Group";
 import AddNewGroup from "./AddNewGroup";
@@ -11,7 +11,6 @@ function delay(ms: number): Promise<void> {
     setTimeout(resolve, ms);
   });
 }
-
 
 export type HandleTaskDrop = ({
   newGroupId,
@@ -34,53 +33,54 @@ export default function Board() {
     setIsAddNewGroupInputOpen(false);
   };
 
-  const handleAddNewTask: OnAddNewTask = ({ newTask, groupId }) => {
-    const updateGroups = groups.map((group) =>
-      group.id === groupId
-        ? { ...group, tasks: [...group.tasks, newTask] }
-        : group,
+  const handleAddNewTask: OnAddNewTask = useCallback(({ newTask, groupId }) => {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === groupId
+          ? { ...group, tasks: [...group.tasks, newTask] }
+          : group,
+      ),
     );
-    console.log("updateGroups: ", updateGroups);
-    setGroups(updateGroups);
-  };
+  }, []);
 
-  const handleTaskDrop: HandleTaskDrop = ({ task, newGroupId }) => {
-    const currentGroupId = task.groupId; //group in which the task is currently in
-    const updatedGroups = [...groups];
-    if (newGroupId === currentGroupId) return; //no need to update the state
+  const handleTaskDrop: HandleTaskDrop = useCallback(({ task, newGroupId }) => {
+    const currentGroupId = task.groupId;
+    if (newGroupId === currentGroupId) return;
 
-    for (const group of updatedGroups) {
-      if (group.id === currentGroupId)
-        group.tasks = group.tasks.filter((t) => t.id !== task.id); //remove the task from where it currently at
-      if (group.id === newGroupId) {
-        //add the task to new group id
-        console.log("the group matches wth new group id");
-        task = { ...task, groupId: newGroupId };
-        group.tasks.push(task);
-      }
-    }
-    console.log("updatedGroups: ", updatedGroups);
-    setGroups(updatedGroups);
-  };
+    setGroups((prevGroups) =>
+      prevGroups.map((group) => {
+        if (group.id === currentGroupId) {
+          return {
+            ...group,
+            tasks: group.tasks.filter((t) => t.id !== task.id),
+          };
+        }
+        if (group.id === newGroupId) {
+          return {
+            ...group,
+            tasks: [...group.tasks, { ...task, groupId: newGroupId }],
+          };
+        }
+        return group;
+      }),
+    );
+  }, []);
 
- const handleTaskStatusToggle: HandleTaskStatusToggle = (task) => {
-    const {id: taskId, groupId} = task; //the task item contains both the id and the group  it is in
-    const updatedGroups  = [...groups];
-   const group  = updatedGroups.find(group => group.id === groupId);
-   if(group){
-     group.tasks = group.tasks.map(t => t.id === taskId? 
-                    ({...t, 
-                    completed: !t.completed
-                     }
-                  )
-                  : t);
-  }
-  console.log('groups after toggling the task');
-  console.log(updatedGroups)
-  setGroups(updatedGroups);
- 
- }
+  const handleTaskStatusToggle: HandleTaskStatusToggle = useCallback((task) => {
+    const { id: taskId, groupId } = task;
 
+    setGroups((prevGroups) =>
+      prevGroups.map((group) => {
+        if (group.id !== groupId) return group;
+        return {
+          ...group,
+          tasks: group.tasks.map((t) =>
+            t.id === taskId ? { ...t, completed: !t.completed } : t,
+          ),
+        };
+      }),
+    );
+  }, []);
 
   return (
     <div className="flex gap-4 overflow-x-auto p-4 h-screen">

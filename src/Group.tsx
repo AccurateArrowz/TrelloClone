@@ -4,6 +4,7 @@ import Task from "./Task";
 import type { UUID } from "./types";
 import type { TaskType } from "./Task";
 import type { HandleTaskDrop, HandleTaskStatusToggle } from "./Board";
+import React from "react";
 
 export type GroupType = {
   id: UUID;
@@ -20,7 +21,7 @@ type GroupProps = {
 
 
 
-export default function Group({ group, onAddNewTask, handleTaskDrop, submitTaskStatusToggle}: GroupProps) {
+const Group = React.memo(function Group({ group, onAddNewTask, handleTaskDrop, submitTaskStatusToggle}: GroupProps) {
   const [isAddNewTaskInputOpen, setIsAddNewTaskInputOpen] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false); //note drageOver means a element is being hovered over the div (referencing from browser api)
   
@@ -85,4 +86,5 @@ export default function Group({ group, onAddNewTask, handleTaskDrop, submitTaskS
       ></AddNewTask>
     </div>
   );
-}
+});
+export default Group;
