@@ -28,7 +28,7 @@ export default function UserSearchPage() {
         const fetchUserById= async (id: number)=> {
             try {
                 const result = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
-                    signal: abortControllerRef.current.signal;
+                    signal: abortControllerRef.current.signal,
                 });
                 const data = await result.json();
                 console.log(data);

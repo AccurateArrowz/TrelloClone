@@ -1,6 +1,5 @@
 import './App.css'
 import Board from './Board.tsx'
-import DraggableBoard from './practice/drag-and-drop/DraggableBoard.tsx'
 
 function App() {
 

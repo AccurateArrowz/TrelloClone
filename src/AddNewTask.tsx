@@ -5,20 +5,20 @@ type AddNewTaskProp = {
   isAddNewTaskInputOpen: boolean;
   openAddNewTaskInput: () => void;
   closeAddNewTaskInput: () => void;
-  onAddNewTask:  (description: string)=> void,
+  HandleAddNewTask:  (description: string)=> void,
 };
 
 export default function AddNewTask({
   isAddNewTaskInputOpen,
   openAddNewTaskInput,
   closeAddNewTaskInput,
-  onAddNewTask,
+  HandleAddNewTask,
 }: AddNewTaskProp) {
   const [newTaskDescription, setNewTaskDescription] = useState('');
   
   const handleAddNewTask =()=> {
     if(!newTaskDescription.trim()) return ;
-    onAddNewTask(newTaskDescription);
+    HandleAddNewTask(newTaskDescription);
   }
 
 

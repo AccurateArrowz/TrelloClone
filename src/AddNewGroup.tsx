@@ -6,12 +6,12 @@ type AddNewGroupProps = {
   isAddNewGroupInputOpen: boolean;
   openAddNewGroupInput: () => void;
   onCloseNewGroupInput: () => void;
-  onAddNewGroup: (group: GroupType) => void;
+  HandleAddNewGroup: (group: GroupType) => void;
 };
 
 export default function AddNewGroup({
   isAddNewGroupInputOpen,
-  onAddNewGroup,
+  HandleAddNewGroup,
   onCloseNewGroupInput,
   openAddNewGroupInput,
 }: AddNewGroupProps) {
@@ -24,11 +24,11 @@ export default function AddNewGroup({
       tasks: []
     };
     setNewGroupTitle("");
-    onAddNewGroup(newGroup);
+    HandleAddNewGroup(newGroup);
   };
 
   return (
-    <div className="w-[300px] max-h-1/3 border-pink border-2 px-4 py-2"> {/* same div wrapper in both condition */}
+    <div className="w-[300px] max-h-1/3 border-pink border-1 px-4 py-2"> {/* same div wrapper in both condition */}
       {!isAddNewGroupInputOpen && (
         <button
           className="border-amber-900 border-4"

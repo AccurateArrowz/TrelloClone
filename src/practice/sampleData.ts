@@ -1,9 +1,9 @@
-import type { GroupType } from "./Group";
-import type { TaskType } from "./Task";
+import type { GroupType  } from "./Group";
+import type { RawTaskType } from "./Task";
 import type { UUID } from "./types";
 
 //sample data for userId A and boardId x
-export const sampleData: GroupType[] = [
+export const sampleData: GroupType [] = [
   {
     id: "group-a" as UUID,
     title: "Group First",
@@ -45,7 +45,7 @@ export const sampleData: GroupType[] = [
 ];
 
 // larger sample data (4 groups * 5 tasks)
-export const sampleData2: GroupType[] = [
+export const sampleData2: GroupType [] = [
   {
     id: "group-1" as UUID,
     title: "Backlog",
@@ -105,7 +105,7 @@ type GroupApiShape ={
 }
 
 type TaskApiShape = {
-  [k: string]: TaskType,
+  [k: string]: RawTaskType,
 }
 
 export const sampleData3: BoardApiShape = {

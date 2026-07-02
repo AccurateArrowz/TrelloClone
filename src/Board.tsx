@@ -1,30 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import type { GroupType } from "./Group";
 import Group from "./Group";
 import AddNewGroup from "./AddNewGroup";
-import type { UUID, OnAddNewTask } from "./types";
+import type { GroupType } from "./Group";
+import type { UUID, HandleAddNewTask, HandleDeleteTask, HandleUpdateTask, HandleTaskDrop, HandleTaskStatusToggle } from "./types";
 import type { TaskType } from "./Task";
-import { sampleData2 } from "./rough_sampleData";
+import { sampleData } from "./rough_sampleData";
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+type TaskNewPosition = {
+  index: number,
+  order: number,
 }
 
-export type HandleTaskDrop = ({
-  newGroupId,
-  task,
-}: {
-  newGroupId: UUID;
-  task: TaskType;
-}) => void;
-
-export type HandleTaskStatusToggle = (task: TaskType) => void;
-
 export default function Board() {
-  const [groups, setGroups] = useState(sampleData2);
-
+  const [groups, setGroups] = useState(sampleData);
   // const [groups, setGroups] = useState(sampleData3);
   const [isAddNewGroupInputOpen, setIsAddNewGroupInputOpen] = useState(false);
 
@@ -33,7 +21,7 @@ export default function Board() {
     setIsAddNewGroupInputOpen(false);
   };
 
-  const handleAddNewTask: OnAddNewTask = useCallback(({ newTask, groupId }) => {
+  const handleAddNewTask: HandleAddNewTask = useCallback(({ newTask, groupId }) => {
     setGroups((prevGroups) =>
       prevGroups.map((group) =>
         group.id === groupId
@@ -43,24 +31,68 @@ export default function Board() {
     );
   }, []);
 
-  const handleTaskDrop: HandleTaskDrop = useCallback(({ task, newGroupId }) => {
+  const handleTaskDrop: HandleTaskDrop = useCallback(({ task, newGroupId, dropIndicator }) => {
     const currentGroupId = task.groupId;
-    if (newGroupId === currentGroupId) return;
 
     setGroups((prevGroups) =>
       prevGroups.map((group) => {
+        // Case 1: Same group reordering
+        if (group.id === currentGroupId && currentGroupId === newGroupId) {
+          const tasksWithoutDropped = group.tasks.filter((t: TaskType) => t.id !== task.id);
+          let insertIndex = tasksWithoutDropped.length;
+
+          if (dropIndicator && dropIndicator.taskAnchorId) {
+            const anchorIndex = tasksWithoutDropped.findIndex(
+              (t: TaskType) => t.id === dropIndicator.taskAnchorId
+            );
+            if (anchorIndex !== -1) {
+              insertIndex = dropIndicator.position === "top" ? anchorIndex : anchorIndex + 1;
+            }
+          }
+
+          const updatedTask = { ...task, groupId: newGroupId };
+          const newTasks = [...tasksWithoutDropped];
+          newTasks.splice(insertIndex, 0, updatedTask);
+
+          return {
+            ...group,
+            tasks: newTasks.map((t, idx) => ({ ...t, order: idx })),
+          };
+        }
+
+        // Case 2: Different group - remove from source group
         if (group.id === currentGroupId) {
           return {
             ...group,
-            tasks: group.tasks.filter((t) => t.id !== task.id),
+            tasks: group.tasks
+              .filter((t: TaskType) => t.id !== task.id)
+              .map((t, idx) => ({ ...t, order: idx })),
           };
         }
+
+        // Case 3: Different group - insert into target group
         if (group.id === newGroupId) {
+          let insertIndex = group.tasks.length;
+
+          if (dropIndicator && dropIndicator.taskAnchorId) {
+            const anchorIndex = group.tasks.findIndex(
+              (t: TaskType) => t.id === dropIndicator.taskAnchorId
+            );
+            if (anchorIndex !== -1) {
+              insertIndex = dropIndicator.position === "top" ? anchorIndex : anchorIndex + 1;
+            }
+          }
+
+          const updatedTask = { ...task, groupId: newGroupId };
+          const newTasks = [...group.tasks];
+          newTasks.splice(insertIndex, 0, updatedTask);
+
           return {
             ...group,
-            tasks: [...group.tasks, { ...task, groupId: newGroupId }],
+            tasks: newTasks.map((t, idx) => ({ ...t, order: idx })),
           };
         }
+
         return group;
       }),
     );
@@ -74,7 +106,7 @@ export default function Board() {
         if (group.id !== groupId) return group;
         return {
           ...group,
-          tasks: group.tasks.map((t) =>
+          tasks: group.tasks.map((t: TaskType) =>
             t.id === taskId ? { ...t, completed: !t.completed } : t,
           ),
         };
@@ -82,13 +114,24 @@ export default function Board() {
     );
   }, []);
 
+  const handleTaskUpdate: HandleUpdateTask = useCallback(({taskId, groupId,  newValue})=> {
+      setGroups (prevGroups=> prevGroups.map(group=> {
+       if (group.id === groupId ){ 
+        return {...group, tasks: group.tasks.map(t=>t.id === taskId? {...t , description: newValue} : t )}}
+       return group
+      }))
+  }, [])
+
+
+
+  
   return (
     <div className="flex gap-4 overflow-x-auto p-4 h-screen">
-      {groups.map((group) => (
+   {groups && groups.map((group) => (
         <Group
           key={group.id}
           group={group}
-          onAddNewTask={handleAddNewTask}
+          HandleAddNewTask={handleAddNewTask}
           handleTaskDrop={handleTaskDrop}
           submitTaskStatusToggle={handleTaskStatusToggle}
         ></Group>
@@ -98,7 +141,7 @@ export default function Board() {
         isAddNewGroupInputOpen={isAddNewGroupInputOpen}
         openAddNewGroupInput={() => setIsAddNewGroupInputOpen(true)}
         onCloseNewGroupInput={() => setIsAddNewGroupInputOpen(false)}
-        onAddNewGroup={handleAddNewGroup}
+        HandleAddNewGroup={handleAddNewGroup}
       ></AddNewGroup>
     </div>
   );
