@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import AddNewTask from "./AddNewTask";
 import Task from "./Task";
-import type { UUID } from "./types";
+import type { UUID, HandleTaskDrop, HandleTaskStatusToggle, HandleUpdateTask, HandleDeleteTask } from "./types";
 import type { TaskType } from "./Task";
-import type { HandleTaskDrop, HandleTaskStatusToggle } from "./types";
 import React from "react";
 
 
@@ -30,6 +29,8 @@ type GroupProps = {
   }) => void;
   handleTaskDrop: HandleTaskDrop;
   submitTaskStatusToggle: HandleTaskStatusToggle;
+  onUpdateTask: HandleUpdateTask;
+  onDeleteTask: HandleDeleteTask;
 };
 
 const DRAG_OVER_THROTTLE_MS = 50;
@@ -47,6 +48,8 @@ const Group = React.memo(function Group({
   HandleAddNewTask,
   handleTaskDrop,
   submitTaskStatusToggle,
+  onUpdateTask,
+  onDeleteTask,
 }: GroupProps) {
   const [isAddNewTaskInputOpen, setIsAddNewTaskInputOpen] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false); //note drageOver means a element is being hovered over the div (referencing from browser api)
@@ -191,6 +194,8 @@ const Group = React.memo(function Group({
             task={task}
             onTaskStatusToggle={onTaskStatusToggle}
             dropIndicator={dropIndicator}
+            onTaskUpdate={onUpdateTask}
+            onDeleteTask={onDeleteTask}
           ></Task>
         ))}
       </ul>

@@ -4,7 +4,7 @@ import AddNewGroup from "./AddNewGroup";
 import type { GroupType } from "./Group";
 import type { UUID, HandleAddNewTask, HandleDeleteTask, HandleUpdateTask, HandleTaskDrop, HandleTaskStatusToggle } from "./types";
 import type { TaskType } from "./Task";
-import { sampleData } from "./rough_sampleData";
+import { sampleData2 } from "./data/sampleData";
 
 type TaskNewPosition = {
   index: number,
@@ -12,7 +12,7 @@ type TaskNewPosition = {
 }
 
 export default function Board() {
-  const [groups, setGroups] = useState(sampleData);
+  const [groups, setGroups] = useState(sampleData2);
   // const [groups, setGroups] = useState(sampleData3);
   const [isAddNewGroupInputOpen, setIsAddNewGroupInputOpen] = useState(false);
 
@@ -114,6 +114,21 @@ export default function Board() {
     );
   }, []);
 
+  const handleDeleteTask: HandleDeleteTask = useCallback(({ task }) => {
+    const { id: taskId, groupId } = task;
+    setGroups((prevGroups) =>
+      prevGroups.map((group) => {
+        if (group.id !== groupId) return group;
+        return {
+          ...group,
+          tasks: group.tasks
+            .filter((t) => t.id !== taskId)
+            .map((t, idx) => ({ ...t, order: idx })),
+        };
+      }),
+    );
+  }, []);
+
   const handleTaskUpdate: HandleUpdateTask = useCallback(({taskId, groupId,  newValue})=> {
       setGroups (prevGroups=> prevGroups.map(group=> {
        if (group.id === groupId ){ 
@@ -122,27 +137,31 @@ export default function Board() {
       }))
   }, [])
 
-
-
-  
   return (
-    <div className="flex gap-4 overflow-x-auto p-4 h-screen">
-   {groups && groups.map((group) => (
-        <Group
-          key={group.id}
-          group={group}
-          HandleAddNewTask={handleAddNewTask}
-          handleTaskDrop={handleTaskDrop}
-          submitTaskStatusToggle={handleTaskStatusToggle}
-        ></Group>
-      ))}
+    <div className="flex flex-col w-full h-screen p-6 bg-gray-50/50 dark:bg-zinc-950">
+      <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-6 text-left border-b border-gray-200 dark:border-zinc-800 pb-3">
+        Sprint Board
+      </h1>
+      <div className="flex gap-4 overflow-x-auto flex-1 pb-4">
+        {groups && groups.map((group) => (
+          <Group
+            key={group.id}
+            group={group}
+            HandleAddNewTask={handleAddNewTask}
+            handleTaskDrop={handleTaskDrop}
+            submitTaskStatusToggle={handleTaskStatusToggle}
+            onUpdateTask={handleTaskUpdate}
+            onDeleteTask={handleDeleteTask}
+          ></Group>
+        ))}
 
-      <AddNewGroup
-        isAddNewGroupInputOpen={isAddNewGroupInputOpen}
-        openAddNewGroupInput={() => setIsAddNewGroupInputOpen(true)}
-        onCloseNewGroupInput={() => setIsAddNewGroupInputOpen(false)}
-        HandleAddNewGroup={handleAddNewGroup}
-      ></AddNewGroup>
+        <AddNewGroup
+          isAddNewGroupInputOpen={isAddNewGroupInputOpen}
+          openAddNewGroupInput={() => setIsAddNewGroupInputOpen(true)}
+          onCloseNewGroupInput={() => setIsAddNewGroupInputOpen(false)}
+          HandleAddNewGroup={handleAddNewGroup}
+        ></AddNewGroup>
+      </div>
     </div>
   );
 }

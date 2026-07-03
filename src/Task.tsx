@@ -26,6 +26,8 @@ export type TaskProp = {
   onTaskStatusToggle: HandleTaskStatusToggle;
   onAddTaskRef: HandleTaskRef;
   dropIndicator: DropIndicator;
+  onTaskUpdate: (payload: { taskId: string; groupId: string; newValue: string }) => void;
+  onDeleteTask: (payload: { task: TaskType }) => void;
 };
 
 export default function Task({
@@ -33,6 +35,8 @@ export default function Task({
   onTaskStatusToggle,
   onAddTaskRef,
   dropIndicator,
+  onTaskUpdate,
+  onDeleteTask,
 }: TaskProp) {
   const { description, completed } = task;
   const taskRef = useRef<HTMLLIElement | null>(null);
@@ -63,16 +67,16 @@ export default function Task({
     };
   }, []);
 if(showUpdateTask){
-  return <UpdateTask id={task.id} text={task.description} onCancelTaskUpdate={cancelUpdateTask} ></UpdateTask>
+  return <UpdateTask id={task.id} groupId={task.groupId} text={task.description} onTaskUpdate={onTaskUpdate} onCancelUpdateTask={cancelUpdateTask} ></UpdateTask>
 }
   return (
 <li
   className={cn(
     "flex gap-1 border-1 relative mt-1.5",
     // top dropIndicator
-    "before:content-[''] before:absolute before:-top-0.5 before:left-0 before:w-full before:h-0.5 before:bg-blue-400 before:rounded-full before:pointer-events-none before:opacity-0 before:transition-opacity before:duration-200",
+    "before:content-[''] before:absolute before:-top-0.5 before:left-0 before:w-full before:h-[4px] before:bg-blue-400 before:rounded-full before:pointer-events-none before:opacity-0 before:transition-opacity before:duration-200",
     // bottom dropIndicator
-    "after:content-[''] after:absolute after:-bottom-0.5 after:left-0 after:w-full after:h-0.5 after:bg-blue-400 after:rounded-full after:pointer-events-none after:opacity-0 after:transition-opacity after:duration-200",
+    "after:content-[''] after:absolute after:-bottom-0.5 after:left-0 after:w-full after:h-[4px] after:bg-blue-400 after:rounded-full after:pointer-events-none after:opacity-0 after:transition-opacity after:duration-200",
     showDropIndicator && dropIndicator.position === "top" && "before:opacity-100",
     showDropIndicator && dropIndicator.position === "bottom" && "after:opacity-100",
   )}
@@ -95,12 +99,14 @@ if(showUpdateTask){
     <button
       aria-label="Edit card"
       className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors"
+      onClick={() => setShowUpdateTask(true)}
       >
       <Pencil size={14} />
     </button>
     <button
       aria-label="Delete card"
       className="rounded p-1 text-neutral-400 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 transition-colors"
+      onClick={() => onDeleteTask({ task })}
       >
       <Trash size={14} />
     </button>
